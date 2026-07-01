@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Préstamos</title>
+    <link rel="stylesheet" href="css/prestamos.css">
+</head>
+
+<body>
+
+    <header>
+        <h1>Sistema de Inventario</h1>
+
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="inventario.html">Inventario</a>
+            <a href="prestamos.html" class="activo">Préstamos</a>
+            <a href="mantenimiento.html">Mantenimiento</a>
+            <a href="reportes.html">Reportes</a>
+            <a href="login.html">Iniciar Sesión</a>
+        </nav>
+    </header>
+
+    <div class="banner">
+
+        <section class="titulo">
+            <h2>Gestión de Préstamos</h2>
+            <p>Control de recursos prestados y devoluciones.</p>
+        </section>
+
+        <section class="contenedor">
+
+            <div class="formulario">
+                <h3>Registrar Préstamo</h3>
+
+                <input type="text" placeholder="Nombre del recurso">
+                <input type="text" placeholder="Persona responsable">
+                <input type="date">
+                <input type="date">
+
+                <select>
+                    <option>Prestado</option>
+                    <option>Devuelto</option>
+                    <option>Pendiente</option>
+                </select>
+
+                <button>Guardar préstamo</button>
+            </div>
+
+            <div class="tabla">
+                <h3>Lista de Préstamos</h3>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Recurso</th>
+                            <th>Responsable</th>
+                            <th>Fecha préstamo</th>
+                            <th>Fecha devolución</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Camilla</td>
+                            <td>Operador CRC</td>
+                            <td>2026-07-01</td>
+                            <td>2026-07-05</td>
+                            <td>Prestado</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+    </div>
+
+    <footer>
+        <p>Universidad Fidélitas - Proyecto Cliente Servidor</p>
+    </footer>
+
+</body>
+
+</html>

@@ -1,128 +1,124 @@
-*{
+* {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-body{
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #1f1f1f;
 }
 
-.banner{
-    background-image: url('/proyecto/img/fondo.png');
+.banner {
+    background-image: linear-gradient(rgba(0,0,0,0.65), rgba(0,0,0,0.65)), url("../img/fondo.png");
     background-size: cover;
     background-position: center;
     min-height: 100vh;
 }
 
-/* Encabezado */
-
-header{
-    background-color: #c62828;
+header {
+    background-color: #5b0f13;
     padding: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.45);
 }
 
-header h1{
+header h1 {
     color: white;
     text-align: center;
     margin-bottom: 15px;
 }
 
-/* Menú */
-
-
-nav{
+nav {
     text-align: center;
 }
 
-nav a{
+nav a {
     color: white;
     text-decoration: none;
-    margin: 10px;
-    padding: 10px;
+    padding: 12px 18px;
+    margin: 5px;
+    display: inline-block;
+    border-radius: 8px;
     font-weight: bold;
+    transition: 0.3s;
 }
 
-nav a:hover{
-    background-color: white;
-    color: #c62828;
-    border-radius: 5px;
+nav a:hover,
+.activo {
+    background-color: #8b1e23;
 }
 
-/* Botón Login */
-
-.login{
-    background-color: white;
-    color: #c62828;
-    border-radius: 5px;
-}
-
-/* Sección principal */
-
-.inicio{
+.inicio {
+    width: 90%;
+    margin: auto;
+    padding: 90px 20px 50px;
     text-align: center;
-    padding: 80px 20px;
-    color: red;
+    color: white;
 }
 
-.inicio h2{
+.inicio h2 {
+    font-size: 44px;
     margin-bottom: 20px;
+    text-shadow: 2px 2px 6px black;
 }
 
-.inicio p{
+.inicio p {
     width: 70%;
     margin: auto;
-    margin-bottom: 20px;
+    font-size: 20px;
+    line-height: 1.6;
+    text-shadow: 2px 2px 6px black;
 }
 
-/* Botón principal */
-
-.inicio button{
-    padding: 12px 25px;
+button {
+    margin-top: 35px;
+    padding: 15px 35px;
+    background-color: #8b1e23;
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
+    font-size: 17px;
     font-weight: bold;
+    transition: 0.3s;
 }
 
-.inicio button:hover{
-    background-color: #ffd54f;
-}
-
-/* Tarjetas */
-
-.contenedor{
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 20px;
-    padding: 40px;
-}
-
-.tarjeta{
-    background-color: white;
-    width: 250px;
-    padding: 20px;
-    text-align: center;
-    border-radius: 10px;
-    box-shadow: 2px 2px 10px gray;
-}
-
-.tarjeta:hover{
+button:hover {
+    background-color: #6f1519;
     transform: scale(1.05);
 }
 
-.tarjeta h3{
-    color: #c62828;
-    margin-bottom: 10px;
+.contenedor {
+    width: 90%;
+    margin: 40px auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 25px;
 }
 
-/* Pie de página */
+.tarjeta {
+    background-color: rgba(20,20,20,0.72);
+    color: white;
+    padding: 30px;
+    border-radius: 15px;
+    text-align: center;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.15);
+}
 
-footer{
-    background-color: #333;
+.tarjeta h3 {
+    color: #d63c44;
+    margin-bottom: 15px;
+    font-size: 25px;
+}
+
+.tarjeta p {
+    line-height: 1.5;
+}
+
+footer {
+    background-color: #2c2c2c;
     color: white;
     text-align: center;
-    padding: 15px;
+    padding: 16px;
 }
