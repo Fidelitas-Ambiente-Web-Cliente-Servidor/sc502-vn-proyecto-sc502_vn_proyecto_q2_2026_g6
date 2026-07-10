@@ -1,20 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const loginBox = document.querySelector(".login-box");
-
-    if (loginBox) {
-        loginBox.style.opacity = "0";
-        loginBox.style.transform = "translateY(30px)";
-        loginBox.style.transition = "opacity 0.6s ease-out, transform 0.6s ease-out";
-
-        setTimeout(function () {
-            loginBox.style.opacity = "1";
-            loginBox.style.transform = "translateY(0)";
-        }, 100);
-    }
-
-    const formulario = document.querySelector(".login-box form");
-    if (!formulario) return;
-
+    const formulario = document.querySelector("form");
     const campoUsuario = document.getElementById("usuario");
     const campoContrasena = document.getElementById("contrasena");
 
@@ -29,19 +14,15 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        validarCredenciales(usuario, contrasena, formulario);
+        validarCredenciales(usuario, contrasena);
     });
 });
 
-function validarCredenciales(usuario, contrasena, formulario) {
-    const botonIngresar = formulario.querySelector('button[type="submit"]');
-    const textoOriginal = botonIngresar ? botonIngresar.innerText : "";
-
-    if (botonIngresar) {
-        botonIngresar.innerText = "Validando credenciales...";
-        botonIngresar.disabled = true;
-    }
-
+/**
+ * Credenciales temporales del sistema.
+ * Más adelante pueden reemplazarse por una base de datos.
+ */
+function validarCredenciales(usuario, contrasena) {
     const usuariosPermitidos = [
         {
             usuario: "admin",
@@ -57,37 +38,27 @@ function validarCredenciales(usuario, contrasena, formulario) {
         }
     ];
 
-    setTimeout(function () {
-        const usuarioEncontrado = usuariosPermitidos.find(function (registro) {
-            return registro.usuario === usuario && registro.contrasena === contrasena;
-        });
+    const usuarioEncontrado = usuariosPermitidos.find(function (registro) {
+        return (
+            registro.usuario === usuario &&
+            registro.contrasena === contrasena
+        );
+    });
 
-        if (!usuarioEncontrado) {
-            alert("Usuario o contraseña incorrectos.");
+    if (!usuarioEncontrado) {
+        alert("Usuario o contraseña incorrectos.");
+        return;
+    }
 
-            if (botonIngresar) {
-                botonIngresar.innerText = textoOriginal;
-                botonIngresar.disabled = false;
-            }
+    const sesion = {
+        usuario: usuarioEncontrado.usuario,
+        nombre: usuarioEncontrado.nombre,
+        rol: usuarioEncontrado.rol
+    };
 
-            const contrasenaInput = document.getElementById("contrasena");
-            if (contrasenaInput) {
-                contrasenaInput.value = "";
-                contrasenaInput.focus();
-            }
+    localStorage.setItem("usuarioActivo", JSON.stringify(sesion));
 
-            return;
-        }
+    alert("Inicio de sesión exitoso.");
 
-        const sesion = {
-            usuario: usuarioEncontrado.usuario,
-            nombre: usuarioEncontrado.nombre,
-            rol: usuarioEncontrado.rol
-        };
-
-        localStorage.setItem("usuarioActivo", JSON.stringify(sesion));
-        alert("Inicio de sesión exitoso.");
-        window.location.href = "index.html";
-    }, 1200);
+    window.location.href = "index.html";
 }
-
