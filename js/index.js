@@ -1,30 +1,12 @@
-<<<<<<< Updated upstream
-document.addEventListener('DOMContentLoaded', () => {
-    
-    const tarjetas = document.querySelectorAll('.tarjeta');
-    
-    tarjetas.forEach(tarjeta => {
-        tarjeta.style.opacity = '0';
-        tarjeta.style.transform = 'translateY(40px)';
-        tarjeta.style.transition = 'opacity 0.6s ease-out, transform 0.6s ease-out';
-    });
-
-    setTimeout(() => {
-        tarjetas.forEach((tarjeta, index) => {
-            setTimeout(() => {
-                tarjeta.style.opacity = '1';
-                tarjeta.style.transform = 'translateY(0)';
-            }, index * 200); 
-        });
-    }, 150);
-
-});
-=======
 document.addEventListener("DOMContentLoaded", function () {
     configurarTarjetas();
     verificarSesion();
 });
 
+/**
+ * Permite ingresar a los módulos haciendo clic
+ * en cualquier parte de cada tarjeta.
+ */
 function configurarTarjetas() {
     const tarjetas = document.querySelectorAll(".tarjeta");
 
@@ -44,11 +26,13 @@ function configurarTarjetas() {
     });
 }
 
+/**
+ * Verifica si existe un usuario guardado
+ * en el almacenamiento local del navegador.
+ */
 function verificarSesion() {
     const usuarioGuardado = localStorage.getItem("usuarioActivo");
-
     const enlaceSesion = document.querySelector('a[href="login.html"]');
-
     const tituloInicio = document.querySelector(".inicio h2");
 
     if (!usuarioGuardado) {
@@ -61,28 +45,26 @@ function verificarSesion() {
         usuario = JSON.parse(usuarioGuardado);
     } catch (error) {
         console.error("No fue posible leer la sesión:", error);
-
         localStorage.removeItem("usuarioActivo");
-
         return;
     }
 
     if (usuario.nombre && tituloInicio) {
         tituloInicio.textContent =
-            "Bienvenido, " +
-            usuario.nombre +
-            " - Gestión Integral de Recursos";
+            "Bienvenido, " + usuario.nombre + " — Gestión Integral de Recursos";
     }
 
     if (enlaceSesion) {
         enlaceSesion.textContent = "Cerrar Sesión";
-
         enlaceSesion.href = "#";
 
         enlaceSesion.addEventListener("click", cerrarSesion);
     }
 }
 
+/**
+ * Elimina la sesión guardada y dirige al login.
+ */
 function cerrarSesion(evento) {
     evento.preventDefault();
 
@@ -93,7 +75,5 @@ function cerrarSesion(evento) {
     }
 
     localStorage.removeItem("usuarioActivo");
-
     window.location.href = "login.html";
 }
->>>>>>> Stashed changes
