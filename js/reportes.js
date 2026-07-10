@@ -152,4 +152,3 @@ function generarNombreArchivo(nombre, extension) {
 
     return `${nombre}_${anio}-${mes}-${dia}.${extension}`;
 }
-aaron
