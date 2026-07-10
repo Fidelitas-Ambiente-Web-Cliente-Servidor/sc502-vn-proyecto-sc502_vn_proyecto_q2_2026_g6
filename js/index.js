@@ -77,3 +77,4 @@ function cerrarSesion(evento) {
     localStorage.removeItem("usuarioActivo");
     window.location.href = "login.html";
 }
+aaron

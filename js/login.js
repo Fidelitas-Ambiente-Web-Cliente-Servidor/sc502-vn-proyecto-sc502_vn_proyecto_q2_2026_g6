@@ -62,3 +62,4 @@ function validarCredenciales(usuario, contrasena) {
 
     window.location.href = "index.html";
 }
+aaron
