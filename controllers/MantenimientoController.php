@@ -1,0 +1,9 @@
+<?php
+
+class MantenimientoController
+{
+    public function index()
+    {
+        require_once __DIR__ . '/../views/mantenimiento.php';
+    }
+}

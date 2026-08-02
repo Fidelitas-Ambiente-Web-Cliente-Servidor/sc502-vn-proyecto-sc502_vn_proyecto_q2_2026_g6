@@ -14,12 +14,12 @@
         <h1>Sistema de Inventario</h1>
 
         <nav>
-            <a href="index.html">Inicio</a>
-            <a href="inventario.html" class="activo">Inventario</a>
-            <a href="prestamos.html">Préstamos</a>
-            <a href="mantenimiento.html">Mantenimiento</a>
-            <a href="reportes.html">Reportes</a>
-            <a href="login.html">Iniciar Sesión</a>
+            <a href="index.php?controller=index&action=index">Inicio</a>
+            <a href="index.php?controller=inventario&action=index" class="activo">Inventario</a>
+            <a href="index.php?controller=prestamos&action=index">Préstamos</a>
+            <a href="index.php?controller=mantenimiento&action=index">Mantenimiento</a>
+            <a href="index.php?controller=reportes&action=index">Reportes</a>
+            <a href="index.php?controller=login&action=index">Iniciar Sesión</a>
         </nav>
     </header>
 
