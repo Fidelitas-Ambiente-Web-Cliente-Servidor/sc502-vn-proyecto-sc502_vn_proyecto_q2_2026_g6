@@ -32,7 +32,7 @@
                 mantenimientos, préstamos y reportes institucionales.
             </p>
 
-            <a href="inventario.html">
+            <a href="index.php?controller=inventario&action=index">
                 <button>Explorar Sistema</button>
             </a>
         </section>
