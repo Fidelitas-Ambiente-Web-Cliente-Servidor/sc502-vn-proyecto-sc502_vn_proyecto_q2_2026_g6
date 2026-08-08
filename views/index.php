@@ -22,6 +22,11 @@
                 <a href="index.php?controller=reportes&action=index">Reportes</a>
                 <a href="index.php?controller=login&action=index">Iniciar Sesión</a>
             </nav>
+            <?php if ($usuario): ?>
+                <div class="usuario-activo">
+                    Sesión iniciada: <?= htmlspecialchars($usuario['nombre']) ?>
+                </div>
+            <?php endif; ?>
         </header>
 
         <section class="inicio">
