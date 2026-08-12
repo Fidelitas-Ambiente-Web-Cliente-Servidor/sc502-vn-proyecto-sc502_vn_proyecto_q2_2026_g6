@@ -6,10 +6,12 @@ class PrestamosController
 {
     private PrestamoModel $modelo;
 
-    public function __construct()
-    {
-        $this->modelo = new PrestamoModel();
-    }
+   public function __construct()
+{
+    Autenticacion::requerirSesion();
+
+    $this->modelo = new PrestamoModel();
+}
 
     public function index()
     {
@@ -18,6 +20,7 @@ class PrestamosController
         $usuarios = $this->modelo->obtenerUsuarios();
 
         require_once __DIR__ . '/../views/prestamos.php';
+        require_once __DIR__ . '/../config/Autenticacion.php';
     }
 
     public function registrar()

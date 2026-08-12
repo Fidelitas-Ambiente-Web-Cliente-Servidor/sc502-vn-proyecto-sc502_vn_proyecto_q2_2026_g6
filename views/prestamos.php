@@ -252,4 +252,4 @@ $mensaje = trim($_GET['mensaje'] ?? '');
 
 </body>
 
-</html>
+</html>s

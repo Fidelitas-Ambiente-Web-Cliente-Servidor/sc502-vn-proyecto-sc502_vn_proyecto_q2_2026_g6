@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../models/MantenimientoModel.php';
+require_once __DIR__ . '/../config/Autenticacion.php';
 
 class MantenimientoController
 {
@@ -8,6 +9,8 @@ class MantenimientoController
 
     public function __construct()
     {
+        Autenticacion::requerirSesion();
+
         $this->modelo = new MantenimientoModel();
     }
 

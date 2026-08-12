@@ -7,9 +7,11 @@ class InventarioController
     private InventarioModel $modelo;
 
     public function __construct()
-    {
-        $this->modelo = new InventarioModel();
-    }
+{
+    Autenticacion::requerirSesion();
+
+    $this->modelo = new InventarioModel();
+}
 
     public function index()
     {
@@ -27,6 +29,7 @@ class InventarioController
         }
 
         require_once __DIR__ . '/../views/inventario.php';
+        require_once __DIR__ . '/../config/Autenticacion.php';
     }
 
     public function registrar()
