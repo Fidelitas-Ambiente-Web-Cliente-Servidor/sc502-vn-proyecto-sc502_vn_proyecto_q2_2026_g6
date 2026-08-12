@@ -64,13 +64,57 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Botiquín</td>
-                            <td>Revisión de insumos vencidos</td>
-                            <td>2026-07-01</td>
-                            <td>En revisión</td>
-                        </tr>
+
+                        <?php if (empty($mantenimientos)): ?>
+                            <tr>
+                                <td colspan="5">
+                                    No hay mantenimientos registrados.
+                                </td>
+                            </tr>
+                        <?php else: ?>
+
+                            <?php foreach ($mantenimientos as $mantenimiento): ?>
+                                <tr>
+                                    <td>
+                                        <?= (int) $mantenimiento['id_mantenimiento'] ?>
+                                    </td>
+
+                                    <td>
+                                        <?= htmlspecialchars(
+                                            $mantenimiento['equipo'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+                                    </td>
+
+                                    <td>
+                                        <?= htmlspecialchars(
+                                            $mantenimiento['problema'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+                                    </td>
+
+                                    <td>
+                                        <?= htmlspecialchars(
+                                            $mantenimiento['fecha'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+                                    </td>
+
+                                    <td>
+                                        <?= htmlspecialchars(
+                                            $mantenimiento['estado'],
+                                            ENT_QUOTES,
+                                            'UTF-8'
+                                        ) ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+
+                        <?php endif; ?>
+
                     </tbody>
                 </table>
             </div>
@@ -82,7 +126,7 @@
     <footer>
         <p>Universidad Fidélitas - Proyecto Cliente Servidor</p>
     </footer>
-<script src="js/mantenimiento.js"></script>
+    <script src="js/mantenimiento.js"></script>
 </body>
 
 </html>

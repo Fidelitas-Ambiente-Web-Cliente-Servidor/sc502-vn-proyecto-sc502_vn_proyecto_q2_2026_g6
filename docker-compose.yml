@@ -1,6 +1,8 @@
 services:
   web:
-    image: php:8.2-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: inventario-web
     ports:
       - "8080:80"
