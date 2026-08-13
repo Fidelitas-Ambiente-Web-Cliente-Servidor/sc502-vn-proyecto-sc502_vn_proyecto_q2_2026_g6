@@ -33,22 +33,22 @@
         <section class="cards">
             <div class="card">
                 <h3>Total Recursos</h3>
-                <p>125</p>
+                <p><?= (int) $totales['total_recursos'] ?></p>
             </div>
 
             <div class="card">
                 <h3>Disponibles</h3>
-                <p>87</p>
+                <p><?= (int) $totales['disponibles'] ?></p>
             </div>
 
             <div class="card">
                 <h3>Prestados</h3>
-                <p>21</p>
+                <p><?= (int) $totales['prestados'] ?></p>
             </div>
 
             <div class="card">
                 <h3>Mantenimiento</h3>
-                <p>17</p>
+                <p><?= (int) $totales['en_mantenimiento'] ?></p>
             </div>
         </section>
 
@@ -69,36 +69,22 @@
                     </thead>
 
                     <tbody>
-                        <tr>
-                            <td>Equipo Médico</td>
-                            <td>45</td>
-                            <td>30</td>
-                            <td>10</td>
-                            <td>5</td>
-                        </tr>
-
-                        <tr>
-                            <td>Equipo de Rescate</td>
-                            <td>35</td>
-                            <td>25</td>
-                            <td>5</td>
-                            <td>5</td>
-                        </tr>
-
-                        <tr>
-                            <td>Insumos</td>
-                            <td>45</td>
-                            <td>32</td>
-                            <td>6</td>
-                            <td>7</td>
-                        </tr>
+                        <?php foreach ($resumenCategorias as $fila): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($fila['categoria']) ?></td>
+                                <td><?= (int) ($fila['total'] ?? 0) ?></td>
+                                <td><?= (int) ($fila['disponible'] ?? 0) ?></td>
+                                <td><?= (int) ($fila['prestado'] ?? 0) ?></td>
+                                <td><?= (int) ($fila['mantenimiento'] ?? 0) ?></td>
+                            </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
 
                 <div class="botones">
-                    <button>Exportar PDF</button>
-                    <button>Exportar Excel</button>
-                    <button>Imprimir</button>
+                    <button type="button">Exportar PDF</button>
+                    <button type="button">Exportar Excel</button>
+                    <button type="button">Imprimir</button>
                 </div>
 
             </div>

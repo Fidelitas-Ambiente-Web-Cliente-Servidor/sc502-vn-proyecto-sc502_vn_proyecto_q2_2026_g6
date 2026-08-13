@@ -32,69 +32,63 @@
 
         <section class="contenedor">
 
-            <div class="formulario">
+            <form class="formulario" method="POST" action="index.php?controller=inventario&action=guardar">
                 <h3>Registrar Recurso</h3>
 
-                <input type="text" placeholder="Nombre del recurso">
-                <input type="number" placeholder="Cantidad">
+                <input type="text" name="nombre" placeholder="Nombre del recurso" required>
+                <input type="number" name="cantidad" placeholder="Cantidad" min="0" value="1" required>
 
-                <select>
-                    <option>Equipo Médico</option>
-                    <option>Equipo de Rescate</option>
-                    <option>Insumo Médico</option>
-                    <option>Equipo de Protección Personal</option>
-                    <option>Comunicaciones</option>
+                <select name="id_categoria" required>
+                    <?php foreach ($categorias as $categoria): ?>
+                        <option value="<?= (int) $categoria['id_categoria'] ?>"><?= htmlspecialchars($categoria['nombre']) ?></option>
+                    <?php endforeach; ?>
                 </select>
 
-                <select>
-                    <option>Disponible</option>
-                    <option>En uso</option>
-                    <option>Prestado</option>
-                    <option>Mantenimiento</option>
-                    <option>Vencido</option>
+                <select name="estado">
+                    <option value="Disponible">Disponible</option>
+                    <option value="En uso">En uso</option>
+                    <option value="Prestado">Prestado</option>
+                    <option value="Mantenimiento">Mantenimiento</option>
+                    <option value="Vencido">Vencido</option>
                 </select>
 
-                <button>Guardar recurso</button>
-            </div>
+                <button type="submit">Guardar recurso</button>
+            </form>
 
             <div class="tabla">
                 <h3>Lista de Recursos</h3>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Cantidad</th>
-                            <th>Categoría</th>
-                            <th>Estado</th>
-                        </tr>
-                    </thead>
+                <?php if (!empty($recursos)): ?>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Cantidad</th>
+                                <th>Categoría</th>
+                                <th>Estado</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
 
-                    <tbody>
-                        <tr>
-                            <td>1</td>
-                            <td>Botiquín</td>
-                            <td>5</td>
-                            <td>Equipo Médico</td>
-                            <td>Disponible</td>
-                        </tr>
-                        <tr>
-                            <td>2</td>
-                            <td>Camilla</td>
-                            <td>2</td>
-                            <td>Rescate</td>
-                            <td>Prestado</td>
-                        </tr>
-                        <tr>
-                            <td>3</td>
-                            <td>Radio portátil</td>
-                            <td>8</td>
-                            <td>Comunicaciones</td>
-                            <td>Disponible</td>
-                        </tr>
-                    </tbody>
-                </table>
+                        <tbody>
+                            <?php foreach ($recursos as $recurso): ?>
+                                <tr>
+                                    <td><?= (int) $recurso['id_recurso'] ?></td>
+                                    <td><?= htmlspecialchars($recurso['nombre']) ?></td>
+                                    <td><?= (int) $recurso['cantidad'] ?></td>
+                                    <td><?= htmlspecialchars($recurso['categoria']) ?></td>
+                                    <td><?= htmlspecialchars($recurso['estado']) ?></td>
+                                    <td>
+                                        <a href="index.php?controller=inventario&action=eliminar&id=<?= (int) $recurso['id_recurso'] ?>" onclick="return confirm('¿Desea eliminar este recurso?')">Eliminar</a>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                <?php else: ?>
+                    <p>No hay recursos registrados.</p>
+                <?php endif; ?>
             </div>
 
         </section>
