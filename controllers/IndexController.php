@@ -1,11 +1,11 @@
 <?php
+require_once __DIR__ . '/../config/Autenticacion.php';
+
 class IndexController
 {
     public function index()
     {
-        session_start();
-
-        $usuario = $_SESSION['usuario'] ?? null;
+        $usuario = Autenticacion::usuarioActual();
 
         require_once __DIR__ . '/../views/index.php';
     }

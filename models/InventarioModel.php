@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../config/conexion.php';
 
 class InventarioModel
@@ -11,76 +12,213 @@ class InventarioModel
         $this->conexion = $database->connect();
     }
 
-    public function crearCategoriasPorDefecto(): void
+    public function obtenerRecursos(): array
     {
-        $categorias = [
-            'Equipo Médico',
-            'Equipo de Rescate',
-            'Insumo Médico',
-            'Equipo de Protección Personal',
-            'Comunicaciones'
-        ];
+        $sql = "SELECT
+                    r.id_recurso,
+                    r.nombre,
+                    r.cantidad,
+                    r.id_categoria,
+                    c.nombre AS categoria,
+                    r.estado
+                FROM recursos r
+                INNER JOIN categorias c
+                    ON r.id_categoria = c.id_categoria
+                ORDER BY r.id_recurso DESC";
 
-        foreach ($categorias as $nombre) {
-            $sql = "INSERT INTO categorias (nombre) VALUES (:nombre) ON DUPLICATE KEY UPDATE nombre = nombre";
-            $stmt = $this->conexion->prepare($sql);
-            $stmt->execute([':nombre' => $nombre]);
-        }
+        $consulta = $this->conexion->query($sql);
+
+        return $consulta->fetchAll();
     }
 
     public function obtenerCategorias(): array
     {
-        $sql = "SELECT * FROM categorias ORDER BY nombre ASC";
-        $stmt = $this->conexion->query($sql);
+        $sql = "SELECT id_categoria, nombre
+                FROM categorias
+                ORDER BY nombre";
 
-        return $stmt->fetchAll();
+        $consulta = $this->conexion->query($sql);
+
+        return $consulta->fetchAll();
     }
 
-    public function listarRecursos(): array
+    public function obtenerRecursoPorId(int $idRecurso)
     {
-        $sql = "
-            SELECT r.*, c.nombre AS categoria
-            FROM recursos r
-            INNER JOIN categorias c ON c.id_categoria = r.id_categoria
-            ORDER BY r.id_recurso DESC
-        ";
+        $sql = "SELECT
+                    id_recurso,
+                    nombre,
+                    cantidad,
+                    id_categoria,
+                    estado
+                FROM recursos
+                WHERE id_recurso = :id_recurso";
 
-        $stmt = $this->conexion->query($sql);
+        $consulta = $this->conexion->prepare($sql);
 
-        return $stmt->fetchAll();
+        $consulta->execute([
+            ':id_recurso' => $idRecurso
+        ]);
+
+        return $consulta->fetch();
     }
 
-    public function guardarRecurso(array $datos): bool
-    {
-        $nombre = trim((string) ($datos['nombre'] ?? ''));
-        $cantidad = (int) ($datos['cantidad'] ?? 0);
-        $idCategoria = (int) ($datos['id_categoria'] ?? 0);
-        $estado = trim((string) ($datos['estado'] ?? 'Disponible'));
+    public function registrarRecurso(
+        string $nombre,
+        int $cantidad,
+        int $idCategoria,
+        string $estado
+    ): bool {
+        try {
+            $this->conexion->beginTransaction();
 
-        if ($nombre === '' || $idCategoria <= 0 || $cantidad < 0) {
-            return false;
+            $sql = "INSERT INTO recursos
+                        (nombre, cantidad, id_categoria, estado)
+                    VALUES
+                        (:nombre, :cantidad, :id_categoria, :estado)";
+
+            $consulta = $this->conexion->prepare($sql);
+
+            $consulta->execute([
+                ':nombre' => $nombre,
+                ':cantidad' => $cantidad,
+                ':id_categoria' => $idCategoria,
+                ':estado' => $estado
+            ]);
+
+            $idRecurso = (int) $this->conexion->lastInsertId();
+
+            if ($estado === 'Mantenimiento') {
+                $this->registrarMantenimientoAutomatico($idRecurso);
+            }
+
+            $this->conexion->commit();
+
+            return true;
+        } catch (Throwable $error) {
+            if ($this->conexion->inTransaction()) {
+                $this->conexion->rollBack();
+            }
+
+            throw $error;
         }
+    }
 
-        $sql = "
-            INSERT INTO recursos (nombre, cantidad, id_categoria, estado)
-            VALUES (:nombre, :cantidad, :id_categoria, :estado)
-        ";
+    public function actualizarRecurso(
+        int $idRecurso,
+        string $nombre,
+        int $cantidad,
+        int $idCategoria,
+        string $estado
+    ): bool {
+        try {
+            $this->conexion->beginTransaction();
 
-        $stmt = $this->conexion->prepare($sql);
+            $sql = "UPDATE recursos
+                    SET nombre = :nombre,
+                        cantidad = :cantidad,
+                        id_categoria = :id_categoria,
+                        estado = :estado
+                    WHERE id_recurso = :id_recurso";
 
-        return $stmt->execute([
-            ':nombre' => $nombre,
-            ':cantidad' => $cantidad,
-            ':id_categoria' => $idCategoria,
-            ':estado' => $estado,
+            $consulta = $this->conexion->prepare($sql);
+
+            $consulta->execute([
+                ':id_recurso' => $idRecurso,
+                ':nombre' => $nombre,
+                ':cantidad' => $cantidad,
+                ':id_categoria' => $idCategoria,
+                ':estado' => $estado
+            ]);
+
+            if (
+                $estado === 'Mantenimiento' &&
+                !$this->tieneMantenimientoActivo($idRecurso)
+            ) {
+                $this->registrarMantenimientoAutomatico($idRecurso);
+            } elseif ($estado !== 'Mantenimiento') {
+                $estadoMantenimiento = $estado === 'Vencido'
+                    ? 'Vencido'
+                    : 'Reparado';
+
+                $this->cerrarMantenimientosActivos(
+                    $idRecurso,
+                    $estadoMantenimiento
+                );
+            }
+
+            $this->conexion->commit();
+
+            return true;
+        } catch (Throwable $error) {
+            if ($this->conexion->inTransaction()) {
+                $this->conexion->rollBack();
+            }
+
+            throw $error;
+        }
+    }
+
+    public function eliminarRecurso(int $idRecurso): bool
+    {
+        $sql = "DELETE FROM recursos
+                WHERE id_recurso = :id_recurso";
+
+        $consulta = $this->conexion->prepare($sql);
+
+        return $consulta->execute([
+            ':id_recurso' => $idRecurso
         ]);
     }
 
-    public function eliminarRecurso(int $id): bool
+    private function tieneMantenimientoActivo(int $idRecurso): bool
     {
-        $sql = "DELETE FROM recursos WHERE id_recurso = :id";
-        $stmt = $this->conexion->prepare($sql);
+        $sql = "SELECT COUNT(*)
+                FROM mantenimientos
+                WHERE id_recurso = :id_recurso
+                AND estado IN ('En revisión', 'Fuera de servicio')";
 
-        return $stmt->execute([':id' => $id]);
+        $consulta = $this->conexion->prepare($sql);
+
+        $consulta->execute([
+            ':id_recurso' => $idRecurso
+        ]);
+
+        return (int) $consulta->fetchColumn() > 0;
+    }
+
+    private function registrarMantenimientoAutomatico(
+        int $idRecurso
+    ): void {
+        $sql = "INSERT INTO mantenimientos
+                    (id_recurso, problema, fecha, estado)
+                SELECT
+                    id_recurso,
+                    CONCAT(nombre, ' en mantenimiento'),
+                    CURDATE(),
+                    'En revisión'
+                FROM recursos
+                WHERE id_recurso = :id_recurso";
+
+        $consulta = $this->conexion->prepare($sql);
+
+        $consulta->execute([
+            ':id_recurso' => $idRecurso
+        ]);
+    }
+
+    private function cerrarMantenimientosActivos(
+        int $idRecurso,
+        string $estado
+    ): void {
+        $sql = "UPDATE mantenimientos
+                SET estado = :estado
+                WHERE id_recurso = :id_recurso
+                AND estado IN ('En revisión', 'Fuera de servicio')";
+
+        $consulta = $this->conexion->prepare($sql);
+        $consulta->execute([
+            ':estado' => $estado,
+            ':id_recurso' => $idRecurso,
+        ]);
     }
 }

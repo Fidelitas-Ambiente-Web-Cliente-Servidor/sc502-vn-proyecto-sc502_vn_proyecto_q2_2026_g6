@@ -1,20 +1,20 @@
 <?php
 class Database
 {
-    private string $host = "db";
-    private string $db   = "BdProyectoCruzRoja";
-    private string $user = "root";
-    private string $pass = "root";
-
     public function connect(): PDO
     {
-        $dsn = "mysql:host={$this->host};dbname={$this->db};charset=utf8mb4";
+        $host = getenv('DB_HOST') ?: 'db';
+        $port = getenv('DB_PORT') ?: '3306';
+        $database = getenv('DB_NAME') ?: 'BdProyectoCruzRoja';
+        $user = getenv('DB_USER') ?: 'appuser';
+        $password = getenv('DB_PASSWORD') ?: 'apppass';
 
-        $pdo = new PDO($dsn, $this->user, $this->pass, [
+        $dsn = "mysql:host={$host};port={$port};dbname={$database};charset=utf8mb4";
+
+        return new PDO($dsn, $user, $password, [
             PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+            PDO::ATTR_EMULATE_PREPARES   => false,
         ]);
-
-        return $pdo;
     }
 }

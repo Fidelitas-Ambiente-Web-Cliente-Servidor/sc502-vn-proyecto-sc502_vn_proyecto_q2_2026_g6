@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../config/conexion.php';
 
 class UsuarioModel
@@ -11,17 +12,66 @@ class UsuarioModel
         $this->conexion = $database->connect();
     }
 
-    public function buscarUsuario(string $usuario, string $contrasena)
-    {
-        $sql = "SELECT * FROM usuarios WHERE usuario = :usuario AND contrasena = :contrasena";
+    public function buscarUsuario(
+        string $usuario,
+        string $contrasena
+    ) {
+        $sql = "SELECT
+                    id_usuario,
+                    usuario,
+                    contrasena,
+                    nombre,
+                    rol
+                FROM usuarios
+                WHERE usuario = :usuario";
 
-        $stmt = $this->conexion->prepare($sql);
+        $consulta = $this->conexion->prepare($sql);
 
-        $stmt->execute([
-            ':usuario' => $usuario,
-            ':contrasena' => $contrasena
+        $consulta->execute([
+            ':usuario' => $usuario
         ]);
 
-        return $stmt->fetch();
+        $usuarioEncontrado = $consulta->fetch();
+
+        if (!$usuarioEncontrado) {
+            return false;
+        }
+
+        if (
+            !password_verify(
+                $contrasena,
+                $usuarioEncontrado['contrasena']
+            )
+        ) {
+            return false;
+        }
+
+        unset($usuarioEncontrado['contrasena']);
+
+        return $usuarioEncontrado;
+    }
+
+    public function registrarUsuario(
+        string $usuario,
+        string $contrasena,
+        string $nombre,
+        string $rol
+    ): bool {
+        $sql = "INSERT INTO usuarios
+                    (usuario, contrasena, nombre, rol)
+                VALUES
+                    (:usuario, :contrasena, :nombre, :rol)";
+
+        $consulta = $this->conexion->prepare($sql);
+
+        return $consulta->execute([
+            ':usuario' => $usuario,
+            ':contrasena' => password_hash(
+                $contrasena,
+                PASSWORD_DEFAULT
+            ),
+            ':nombre' => $nombre,
+            ':rol' => $rol
+        ]);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../config/conexion.php';
 
 class ReportesModel
@@ -13,43 +14,124 @@ class ReportesModel
 
     public function obtenerTotales(): array
     {
-        $sql = "
-            SELECT
-                COUNT(*) AS total_recursos,
-                SUM(CASE WHEN estado = 'Disponible' THEN 1 ELSE 0 END) AS disponibles,
-                SUM(CASE WHEN estado = 'Prestado' THEN 1 ELSE 0 END) AS prestados,
-                SUM(CASE WHEN estado = 'Mantenimiento' THEN 1 ELSE 0 END) AS en_mantenimiento
-            FROM recursos
-        ";
+        $sql = "SELECT
+                    COALESCE(SUM(r.cantidad), 0) +
+                    (
+                        SELECT COUNT(*)
+                        FROM prestamos
+                        WHERE estado = 'Prestado'
+                    ) AS total_recursos,
 
-        $stmt = $this->conexion->query($sql);
-        $resultado = $stmt->fetch();
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN r.estado = 'Disponible'
+                                THEN r.cantidad
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS disponibles,
 
-        return [
-            'total_recursos' => (int) ($resultado['total_recursos'] ?? 0),
-            'disponibles' => (int) ($resultado['disponibles'] ?? 0),
-            'prestados' => (int) ($resultado['prestados'] ?? 0),
-            'en_mantenimiento' => (int) ($resultado['en_mantenimiento'] ?? 0),
-        ];
+                    (
+                        SELECT COUNT(*)
+                        FROM prestamos
+                        WHERE estado = 'Prestado'
+                    ) AS prestados,
+
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN r.estado = 'Mantenimiento'
+                                THEN r.cantidad
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS mantenimiento,
+
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN r.estado = 'Vencido'
+                                THEN r.cantidad
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS vencidos
+                FROM recursos r";
+
+        $consulta = $this->conexion->query($sql);
+
+        return $consulta->fetch();
     }
 
-    public function obtenerResumenCategorias(): array
+    public function obtenerResumenPorCategoria(): array
     {
-        $sql = "
-            SELECT
-                c.nombre AS categoria,
-                COUNT(r.id_recurso) AS total,
-                SUM(CASE WHEN r.estado = 'Disponible' THEN 1 ELSE 0 END) AS disponible,
-                SUM(CASE WHEN r.estado = 'Prestado' THEN 1 ELSE 0 END) AS prestado,
-                SUM(CASE WHEN r.estado = 'Mantenimiento' THEN 1 ELSE 0 END) AS mantenimiento
-            FROM categorias c
-            LEFT JOIN recursos r ON r.id_categoria = c.id_categoria
-            GROUP BY c.id_categoria, c.nombre
-            ORDER BY c.nombre ASC
-        ";
+        $sql = "SELECT
+                    c.nombre AS categoria,
 
-        $stmt = $this->conexion->query($sql);
+                    COALESCE(SUM(r.cantidad), 0) +
+                    COALESCE(SUM(pa.cantidad_prestada), 0)
+                        AS total,
 
-        return $stmt->fetchAll();
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN r.estado = 'Disponible'
+                                THEN r.cantidad
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS disponibles,
+
+                    COALESCE(SUM(pa.cantidad_prestada), 0)
+                        AS prestados,
+
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN r.estado = 'Mantenimiento'
+                                THEN r.cantidad
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS mantenimiento,
+
+                    COALESCE(
+                        SUM(
+                            CASE
+                                WHEN r.estado = 'Vencido'
+                                THEN r.cantidad
+                                ELSE 0
+                            END
+                        ),
+                        0
+                    ) AS vencidos
+
+                FROM categorias c
+
+                LEFT JOIN recursos r
+                    ON r.id_categoria = c.id_categoria
+
+                LEFT JOIN (
+                    SELECT
+                        id_recurso,
+                        COUNT(*) AS cantidad_prestada
+                    FROM prestamos
+                    WHERE estado = 'Prestado'
+                    GROUP BY id_recurso
+                ) pa
+                    ON pa.id_recurso = r.id_recurso
+
+                GROUP BY c.id_categoria, c.nombre
+                ORDER BY c.nombre";
+
+        $consulta = $this->conexion->query($sql);
+
+        return $consulta->fetchAll();
     }
 }

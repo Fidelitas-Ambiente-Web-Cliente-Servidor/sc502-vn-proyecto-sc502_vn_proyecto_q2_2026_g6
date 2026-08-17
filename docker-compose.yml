@@ -1,15 +1,22 @@
 services:
   web:
-    image: php:8.2-apache
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: inventario-web
     ports:
       - "8080:80"
     volumes:
       - ./:/var/www/html
+    environment:
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_NAME: BdProyectoCruzRoja
+      DB_USER: appuser
+      DB_PASSWORD: apppass
     depends_on:
-      - db
-    command: >
-      bash -c "docker-php-ext-install pdo_mysql && apache2-foreground"
+      db:
+        condition: service_healthy
     restart: unless-stopped
 
   db:
@@ -23,14 +30,19 @@ services:
       MYSQL_PASSWORD: apppass
     volumes:
       - db_data:/var/lib/mysql
-    ports:
-      - "3307:3306"
+      - ./db/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     container_name: inventario-pma
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       PMA_HOST: db
       PMA_USER: root

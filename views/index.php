@@ -1,3 +1,8 @@
+<?php
+
+$usuario = $usuario ?? null;
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -11,35 +16,91 @@
 <body>
 
     <div class="banner">
+
         <header>
             <h1>Sistema de Inventario</h1>
 
             <nav>
-                <a href="index.php?controller=index&action=index" class="activo">Inicio</a>
-                <a href="index.php?controller=inventario&action=index">Inventario</a>
-                <a href="index.php?controller=prestamos&action=index">Préstamos</a>
-                <a href="index.php?controller=mantenimiento&action=index">Mantenimiento</a>
-                <a href="index.php?controller=reportes&action=index">Reportes</a>
-                <a href="index.php?controller=login&action=index">Iniciar Sesión</a>
+                <a
+                    href="index.php?controller=index&action=index"
+                    class="activo"
+                >
+                    Inicio
+                </a>
+
+                <a href="index.php?controller=inventario&action=index">
+                    Inventario
+                </a>
+
+                <a href="index.php?controller=prestamos&action=index">
+                    Préstamos
+                </a>
+
+                <a href="index.php?controller=mantenimiento&action=index">
+                    Mantenimiento
+                </a>
+
+                <a href="index.php?controller=reportes&action=index">
+                    Reportes
+                </a>
+
+                <?php if ($usuario): ?>
+                    <a
+                        href="index.php?controller=login&action=cerrarSesion"
+                    >
+                        Cerrar Sesión
+                    </a>
+                <?php else: ?>
+                    <a
+                        href="index.php?controller=login&action=index"
+                    >
+                        Iniciar Sesión
+                    </a>
+                <?php endif; ?>
             </nav>
+
             <?php if ($usuario): ?>
                 <div class="usuario-activo">
-                    Sesión iniciada: <?= htmlspecialchars($usuario['nombre']) ?>
+                    Sesión iniciada:
+                    <?= htmlspecialchars(
+                        $usuario['nombre'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
+
+                    -
+                    <?= htmlspecialchars(
+                        $usuario['rol'],
+                        ENT_QUOTES,
+                        'UTF-8'
+                    ) ?>
                 </div>
             <?php endif; ?>
+
         </header>
 
         <section class="inicio">
             <h2>Gestión Integral de Recursos Operativos</h2>
 
             <p>
-                Sistema web para el control de equipos médicos, recursos de rescate,
-                mantenimientos, préstamos y reportes institucionales.
+                Sistema web para el control de equipos médicos,
+                recursos de rescate, mantenimientos, préstamos
+                y reportes institucionales.
             </p>
 
-            <a href="index.php?controller=inventario&action=index">
-                <button>Explorar Sistema</button>
-            </a>
+            <?php if ($usuario): ?>
+                <a href="index.php?controller=inventario&action=index">
+                    <button type="button">
+                        Explorar Sistema
+                    </button>
+                </a>
+            <?php else: ?>
+                <a href="index.php?controller=login&action=index">
+                    <button type="button">
+                        Iniciar Sesión
+                    </button>
+                </a>
+            <?php endif; ?>
         </section>
 
         <section class="contenedor">
@@ -63,13 +124,16 @@
                 <h3>Reportes</h3>
                 <p>Consulta de datos importantes del sistema.</p>
             </div>
+
         </section>
+
     </div>
 
     <footer>
         <p>Universidad Fidélitas - Proyecto Cliente Servidor</p>
     </footer>
-<script src="js/index.js"></script>
+
+    <script src="js/index.js"></script>
 </body>
 
 </html>

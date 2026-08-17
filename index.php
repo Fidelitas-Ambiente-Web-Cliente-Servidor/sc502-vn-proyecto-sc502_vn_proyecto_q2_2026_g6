@@ -42,7 +42,7 @@ switch ($controller) {
         break;
 }
 
-if (!method_exists($obj, $action)) {
+if (str_starts_with($action, '__') || !is_callable([$obj, $action])) {
     http_response_code(404);
     exit('La acción solicitada no existe.');
 }

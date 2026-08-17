@@ -130,3 +130,71 @@ footer {
     text-align: center;
     padding: 16px;
 }
+
+label {
+    display: block;
+    color: white;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.mensaje {
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.mensaje.exito {
+    color: #d4edda;
+    background-color: rgba(40, 167, 69, 0.35);
+    border: 1px solid #28a745;
+}
+
+.mensaje.error {
+    color: #f8d7da;
+    background-color: rgba(220, 53, 69, 0.35);
+    border: 1px solid #dc3545;
+}
+
+.aviso-formulario {
+    color: #ffd166;
+    margin-top: 15px;
+    text-align: center;
+    font-weight: bold;
+}
+
+button:disabled {
+    background-color: #666;
+    cursor: not-allowed;
+}
+
+#buscarMantenimiento {
+    margin-bottom: 20px;
+}
+
+.tabla {
+    overflow-x: auto;
+}
+
+.acciones form {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 250px;
+}
+
+.acciones select,
+.acciones button {
+    width: auto;
+    margin: 0;
+}
+
+.acciones select {
+    flex: 1;
+}
+
+.acciones button {
+    padding: 10px 12px;
+}

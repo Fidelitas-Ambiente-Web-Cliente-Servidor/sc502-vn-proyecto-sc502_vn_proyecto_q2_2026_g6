@@ -139,3 +139,95 @@ footer {
     text-align: center;
     padding: 16px;
 }
+
+label {
+    display: block;
+    color: white;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.mensaje {
+    padding: 15px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.mensaje.exito {
+    color: #d4edda;
+    background-color: rgba(40, 167, 69, 0.35);
+    border: 1px solid #28a745;
+}
+
+.mensaje.error {
+    color: #f8d7da;
+    background-color: rgba(220, 53, 69, 0.35);
+    border: 1px solid #dc3545;
+}
+
+.boton-cancelar {
+    display: block;
+    padding: 14px;
+    margin-top: 12px;
+    color: white;
+    background-color: #555;
+    border-radius: 8px;
+    text-align: center;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.boton-cancelar:hover {
+    background-color: #3f3f3f;
+}
+
+#buscarRecurso {
+    margin-bottom: 20px;
+}
+
+.tabla {
+    overflow-x: auto;
+}
+
+.acciones {
+    white-space: nowrap;
+}
+
+.acciones form {
+    display: inline-block;
+    margin: 0;
+}
+
+.boton-editar,
+.boton-eliminar {
+    display: inline-block;
+    width: auto;
+    padding: 9px 12px;
+    margin: 3px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.boton-editar {
+    background-color: #b7791f;
+}
+
+.boton-editar:hover {
+    background-color: #8f5d18;
+}
+
+.acciones .boton-eliminar {
+    width: auto;
+    margin: 3px;
+    padding: 9px 12px;
+    background-color: #b02a37;
+}
+
+.acciones .boton-eliminar:hover {
+    background-color: #842029;
+}

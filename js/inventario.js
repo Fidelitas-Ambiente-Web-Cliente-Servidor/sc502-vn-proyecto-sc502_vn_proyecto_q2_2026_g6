@@ -1,23 +1,21 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const contenedorTabla = document.querySelector('.tabla');
-    const tablaCuerpo = document.querySelector('.tabla tbody');
+document.addEventListener("DOMContentLoaded", function () {
+    const buscador = document.getElementById("buscarRecurso");
+    const tabla = document.getElementById("tablaRecursos");
 
-    if (contenedorTabla && tablaCuerpo) {
-        const inputBusqueda = document.createElement('input');
-        inputBusqueda.setAttribute('type', 'text');
-        inputBusqueda.setAttribute('placeholder', 'Buscar recursos...');
-        inputBusqueda.style.marginBottom = '20px';
-
-        contenedorTabla.insertBefore(inputBusqueda, contenedorTabla.querySelector('table'));
-
-        inputBusqueda.addEventListener('keyup', function() {
-            const termino = this.value.toLowerCase();
-            const filas = tablaCuerpo.querySelectorAll('tr');
-
-            filas.forEach(fila => {
-                const textoFila = fila.textContent.toLowerCase();
-                fila.style.display = textoFila.includes(termino) ? '' : 'none';
-            });
-        });
+    if (!buscador || !tabla) {
+        return;
     }
+
+    buscador.addEventListener("input", function () {
+        const termino = buscador.value.trim().toLowerCase();
+        const filas = tabla.querySelectorAll("tr");
+
+        filas.forEach(function (fila) {
+            const contenido = fila.textContent.toLowerCase();
+
+            fila.style.display = contenido.includes(termino)
+                ? ""
+                : "none";
+        });
+    });
 });
